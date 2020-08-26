@@ -93,7 +93,8 @@ class Antispam
             "multipart/form-data"
         ];        
         $ajaxHeaders = [
-            'X-Requested-With' => "XMLHttpRequest"
+            'X-Requested-With' => "XMLHttpRequest",
+            'Accept' => "application/json"
         ];
         $requestContentType = strtolower($_SERVER['CONTENT_TYPE']);
         $requestHeaders = getallheaders();
@@ -110,7 +111,7 @@ class Antispam
         foreach ($ajaxHeaders as $ajaxHeaderName=>$ajaxHeaderValue) {
             if (
                 array_key_exists($ajaxHeaderName, $requestHeaders) &&
-                $requestHeaders[$ajaxHeaderName] === $ajaxHeaderValue
+                strpos($requestHeaders[$ajaxHeaderName], $ajaxHeaderValue) !== false
             ) {
                 $isRegularForm = false;
                 break;
