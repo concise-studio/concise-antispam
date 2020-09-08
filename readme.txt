@@ -4,8 +4,8 @@ Tags: spam, antispam, anti-spam, anti spam
 License: GPLv3
 Requires PHP: 5.6
 Requires at least: 4.1
-Tested up to: 5.4
-Stable tag: 1.0.1
+Tested up to: 5.5.1
+Stable tag: 1.0.2
 
 Very simple antispam plugin.
 Users do not need to enter any captcha, working completely on background.
@@ -23,14 +23,8 @@ Fully compatible with Contact Form 7.
 
 Antispam will automatically check submissions of the regular forms but ignores all AJAX requests.
 If you want to change this behaviour, you can use filter `concise_antispam_need_to_validate_token`. 
-See examples:
+See example:
 
-*Enable Antispam for custom AJAX handlers:*
-`
-add_action("wp_ajax_my_custom_form_handler", function() { 
-    add_filter("concise_antispam_need_to_validate_token", "__return_true");
-}, 1);
-`
 *Disable Antispam for some forms:* 
 `
 add_filter("concise_antispam_need_to_validate_token", function($needToValidateToken) {
