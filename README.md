@@ -14,14 +14,7 @@ Fully compatible with Contact Form 7.
 
 Antispam will automatically check submissions of the regular forms but ignores all AJAX requests.
 If you want to change this behaviour, you can use filter `concise_antispam_need_to_validate_token`. 
-See examples:
-
-_Enable Antispam for custom AJAX handlers:_
-```php
-add_action("wp_ajax_my_custom_form_handler", function() { 
-    add_filter("concise_antispam_need_to_validate_token", "__return_true");
-}, 1);
-```
+See example:
 
 _Disable Antispam for some forms:_
 ```php
