@@ -4,7 +4,7 @@ Plugin Name: Concise Antispam
 Description: Concise Antispam
 Author: Concise Studio
 Author URI: https://concise-studio.com
-Version: 1.0.1
+Version: 1.0.2
 Description: Very simple antispam plugin. Users do not need to enter any captcha, works completely on background. No need to administer: just install the plugin and site will be protected. Fully compatible with Contact Form 7.
 */
 
