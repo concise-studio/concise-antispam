@@ -96,6 +96,9 @@ class Antispam
             'X-Requested-With' => "XMLHttpRequest",
             'Accept' => "application/json"
         ];
+        $getParams = [
+            'vcv-ajax' => 1 // Visual Composer requests
+        ];
         $requestContentType = strtolower($_SERVER['CONTENT_TYPE']);
         $requestHeaders = getallheaders();
         
@@ -112,6 +115,17 @@ class Antispam
             if (
                 array_key_exists($ajaxHeaderName, $requestHeaders) &&
                 strpos($requestHeaders[$ajaxHeaderName], $ajaxHeaderValue) !== false
+            ) {
+                $isRegularForm = false;
+                break;
+            }
+        }
+        
+        // check that query string does not have values from denylist
+        foreach ($getParams as $getParamName=>$getParamValue) {
+            if (
+                array_key_exists($getParamName, $_GET) &&
+                $getParamValue == $_GET[$getParamName]
             ) {
                 $isRegularForm = false;
                 break;
