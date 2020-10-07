@@ -144,18 +144,19 @@ class Antispam
         $jsVarName = Antispam::JS_TOKEN_VAR_NAME;
         $bodyVarName = Antispam::REQUEST_BODY_TOKEN_VAR_NAME;
         $token = Antispam::generateToken();
+        $tagScriptId = "id=\"antispam-script-" . crc32($token) . "\""; // include script id to prevent caching
         
         Antispam::saveToken($token);
         
         // Publish token if some handlers wish to include token manually
-        add_action("wp_footer", function() use ($jsVarName, $token) {  
-            echo "<script> var {$jsVarName} = '{$token}'; </script> " . PHP_EOL;
+        add_action("wp_footer", function() use ($jsVarName, $token, $tagScriptId) {  
+            echo "<script {$tagScriptId}> var {$jsVarName} = '{$token}'; </script> " . PHP_EOL;
         });
         
         // Include token in the all forms after loading of the page + 1 second
-        add_action("wp_footer", function() use ($bodyVarName, $token) {  
+        add_action("wp_footer", function() use ($bodyVarName, $token, $tagScriptId) {             
             echo "
-                <script> 
+                <script {$tagScriptId}> 
                     window.addEventListener('load', function() { 
                         var forms = document.querySelectorAll('form');
 
@@ -174,9 +175,9 @@ class Antispam
         });
         
         // Fill token only after user's interaction + 1 second
-        add_action("wp_footer", function() use ($bodyVarName, $jsVarName) {  
+        add_action("wp_footer", function() use ($bodyVarName, $jsVarName, $tagScriptId) {  
             echo "
-                <script> 
+                <script {$tagScriptId}> 
                     function setAntispamTokens() {                        
                         setTimeout(function() {
                             var inputs = document.querySelectorAll('input[name=\"{$bodyVarName}\"]');
