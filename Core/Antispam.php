@@ -154,14 +154,16 @@ class Antispam
         
         // Read token from cookies on the javascript side
         add_action("wp_footer", function() use ($jsVarName, $cookieVarName) {  
-            echo "<script>
-                var {$jsVarName} = null;
-                
-                if (document.cookie.indexOf('{$cookieVarName}') !== -1) {
-                    {$jsVarName} = document.cookie.split('{$cookieVarName}')[1].split('; ')[0].substr(1);
-                    document.cookie='{$cookieVarName}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
-                }
-            </script> ". PHP_EOL;
+            echo "
+                <script>
+                    var {$jsVarName} = null;
+                    
+                    if (document.cookie.indexOf('{$cookieVarName}') !== -1) {
+                        {$jsVarName} = document.cookie.split('{$cookieVarName}')[1].split('; ')[0].substr(1);
+                        document.cookie='{$cookieVarName}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+                    }
+                </script> 
+            ". PHP_EOL;
         });
         
         // Include token in the all forms after loading of the page + 1 second
