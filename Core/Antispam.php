@@ -3,9 +3,8 @@ namespace Concise;
 
 class Antispam
 {   
-    const JS_TOKEN_VAR_NAME = "antispamToken";
     const REQUEST_BODY_TOKEN_VAR_NAME = "antispam_token";
-    const COOKIE_TOKEN_VAR_NAME = "antispam-token";
+    const GET_TOKEN_AJAX_ACTION = "get_concise_antispam_token";
     
     
     
@@ -13,7 +12,8 @@ class Antispam
     
     public static function init()
     {
-        Antispam::createTokenAndIncludeInContent();
+        Antispam::addAjaxActions();
+        Antispam::addFrontendHandler();
         Antispam::initCf7(); // automatically init integration for Contact Form 7
 
         if (Antispam::needToValidateToken()) {
@@ -139,38 +139,55 @@ class Antispam
 
 
 
-   
-    private static function createTokenAndIncludeInContent()
+    private function addAjaxActions()
     {
-        $jsVarName = Antispam::JS_TOKEN_VAR_NAME;
+        $actionName = Antispam::GET_TOKEN_AJAX_ACTION;
+        $actionHandler = function() {
+            $token = Antispam::generateToken();        
+            Antispam::saveToken($token);
+            die($token);
+        };
+        
+        add_action("wp_ajax_{$actionName}", $actionHandler);          
+        add_action("wp_ajax_nopriv_{$actionName}", $actionHandler);
+    }
+    
+    private static function addFrontendHandler()
+    {
+        $actionName = Antispam::GET_TOKEN_AJAX_ACTION;
         $bodyVarName = Antispam::REQUEST_BODY_TOKEN_VAR_NAME;
-        $cookieVarName = Antispam::COOKIE_TOKEN_VAR_NAME;
-        $token = Antispam::generateToken();
         
-        Antispam::saveToken($token);
-        
-        // Set token in cookies
-        setcookie($cookieVarName, $token, 0, "/");
-        
-        // Read token from cookies on the javascript side
-        add_action("wp_footer", function() use ($jsVarName, $cookieVarName) {  
+        // Fetch token from backend and trigger the event
+        add_action("wp_footer", function() use ($actionName, $bodyVarName) {  
             echo "
                 <script>
-                    var {$jsVarName} = null;
-                    
-                    if (document.cookie.indexOf('{$cookieVarName}') !== -1) {
-                        {$jsVarName} = document.cookie.split('{$cookieVarName}')[1].split('; ')[0].substr(1);
-                        document.cookie='{$cookieVarName}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
-                    }
+                    window.addEventListener('load', function() {                  
+                        var request = new XMLHttpRequest();
+
+                        request.onreadystatechange = function() {
+                            if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {                                                    
+                                var antispamTokenLoaded = new CustomEvent('antispamTokenLoaded', { 
+                                    detail: {
+                                        token: request.responseText 
+                                    } 
+                                });
+                                
+                                window.dispatchEvent(antispamTokenLoaded);
+                            }
+                        };
+                        request.open('GET', '/wp-admin/admin-ajax.php?action={$actionName}', true);
+                        request.send();
+                    });
                 </script> 
             ". PHP_EOL;
         });
+          
         
-        // Include token in the all forms after loading of the page + 1 second
-        add_action("wp_footer", function() use ($bodyVarName, $token) {             
+        // Include token in the all forms
+        add_action("wp_footer", function() use ($bodyVarName) {             
             echo "
                 <script> 
-                    window.addEventListener('load', function() { 
+                    window.addEventListener('antispamTokenLoaded', function() { 
                         var forms = document.querySelectorAll('form');
 
                         forms.forEach(function(form) { 
@@ -188,22 +205,26 @@ class Antispam
         });
         
         // Fill token only after user's interaction + 1 second
-        add_action("wp_footer", function() use ($bodyVarName, $jsVarName) {  
+        add_action("wp_footer", function() use ($bodyVarName) {  
             echo "
                 <script> 
-                    function setAntispamTokens() {                        
-                        setTimeout(function() {
-                            var inputs = document.querySelectorAll('input[name=\"{$bodyVarName}\"]');
+                    window.addEventListener('antispamTokenLoaded', function(e) { 
+                        var token = e.detail.token;
 
-                            inputs.forEach(function(input) { 
-                                input.value = {$jsVarName};
-                            });   
-                        }, 1000);
-                        
-                        window.removeEventListener('click', setAntispamTokens);
-                    }
+                        function setAntispamTokens() {                        
+                            setTimeout(function() {
+                                var inputs = document.querySelectorAll('input[name=\"{$bodyVarName}\"]');
+
+                                inputs.forEach(function(input) { 
+                                    input.value = token;
+                                });   
+                            }, 1000);
+                            
+                            window.removeEventListener('click', setAntispamTokens);
+                        }
                 
-                    window.addEventListener('click', setAntispamTokens);                
+                        window.addEventListener('click', setAntispamTokens); 
+                    });               
                 </script> 
             " . PHP_EOL;
         });
