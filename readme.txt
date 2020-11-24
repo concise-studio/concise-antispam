@@ -4,8 +4,8 @@ Tags: spam, antispam, anti-spam, anti spam
 License: GPLv3
 Requires PHP: 5.6
 Requires at least: 4.1
-Tested up to: 5.5.1
-Stable tag: 1.0.5
+Tested up to: 5.5.3
+Stable tag: 1.0.6
 
 Very simple antispam plugin.
 Users do not need to enter any captcha, working completely on background.
