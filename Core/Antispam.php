@@ -98,7 +98,8 @@ class Antispam
             'Accept' => "application/json"
         ];
         $getParams = [
-            'vcv-ajax' => 1 // Visual Composer requests
+            'vcv-ajax' => 1, // Visual Composer requests
+            'action' => "confirm_admin_email" // System email confirmation
         ];
         $requestContentType = strtolower($_SERVER['CONTENT_TYPE']);
         $requestHeaders = getallheaders();
@@ -139,7 +140,7 @@ class Antispam
 
 
 
-    private function addAjaxActions()
+    private static function addAjaxActions()
     {
         $actionName = Antispam::GET_TOKEN_AJAX_ACTION;
         $actionHandler = function() {
