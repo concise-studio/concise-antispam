@@ -68,6 +68,7 @@ class Antispam
     public static function needToValidateToken()
     {
         $needToValidateToken = (
+            array_key_exists("REQUEST_METHOD", $_SERVER) && // absence of REQUEST_METHOD in the array $_SERVER indicates CLI requests. Skip validation in this case
             $_SERVER['REQUEST_METHOD'] === "POST" && // validate token only if it is POST request
             !Antispam::isWpLogin() && // do not validate wp-login.php page
             !\is_admin() && // do not validate if user is in admin panel
