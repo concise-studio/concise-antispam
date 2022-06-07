@@ -16,9 +16,11 @@ class Antispam
         Antispam::addFrontendHandler();
         Antispam::initCf7(); // automatically init integration for Contact Form 7
 
-        if (Antispam::needToValidateToken()) {
-            Antispam::validateTokenOrDie();
-        } 
+        add_action("after_setup_theme", function() {
+            if (Antispam::needToValidateToken()) {
+                Antispam::validateTokenOrDie();
+            }             
+        });
     }
     
     public static function validateTokenOrDie()
