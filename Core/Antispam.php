@@ -152,9 +152,10 @@ class Antispam
     {
         $actionName = Antispam::GET_TOKEN_AJAX_ACTION;
         $bodyVarName = Antispam::REQUEST_BODY_TOKEN_VAR_NAME;
-        
+        $ajaxUrl = admin_url("admin-ajax.php");
+
         // Fetch token from backend and trigger the event
-        add_action("wp_footer", function() use ($actionName, $bodyVarName) {  
+        add_action("wp_footer", function() use ($actionName, $bodyVarName, $ajaxUrl) {  
             echo "
                 <script>
                     window.addEventListener('load', function() {                  
@@ -171,7 +172,7 @@ class Antispam
                                 window.dispatchEvent(antispamTokenLoaded);
                             }
                         };
-                        request.open('GET', '/wp-admin/admin-ajax.php?action={$actionName}', true);
+                        request.open('GET', '{$ajaxUrl}?action={$actionName}', true);
                         request.send();
                     });
                 </script> 
