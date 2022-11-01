@@ -15,6 +15,7 @@ class Antispam
         Antispam::addAjaxActions();
         Antispam::addFrontendHandler();
         Antispam::initCf7(); // automatically init integration for Contact Form 7
+        Antispam::initFormiddable(); // automatically init integration for Formidabble Forms
 
         add_action("after_setup_theme", function() {
             if (Antispam::needToValidateToken()) {
@@ -40,6 +41,13 @@ class Antispam
     {
         add_action("wpcf7_before_send_mail", ["\Concise\Antispam", "validateTokenOrDie"], 1);
     }
+
+    public static function initFormiddable()
+    {
+        add_action("frm_validate_entry", ["\Concise\Antispam", "validateTokenOrDie"], 1);
+    }
+
+    
     
     public static function install()
     {
