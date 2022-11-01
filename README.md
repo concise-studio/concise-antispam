@@ -3,7 +3,7 @@
 Very simple antispam plugin.
 Users do not need to enter any captcha, working completely on background.
 No need to administer: just install the plugin and site will be protected.
-Fully compatible with Contact Form 7.
+Fully compatible with Contact Form 7 and Formidable Forms*.
 
 ##  Algorithm
 1. Plugin generates token on the backend side.
@@ -33,6 +33,10 @@ You can also always manually call `\Concise\Antispam::validateTokenOrDie()` in y
 
 1. Upload plugin to plugins directory
 2. Active plugin through the "Plugins" menu in WordPress
+
+## Formidable Forms integration ==
+
+For proper work disable the honeypot checking in the forms
 
 ## Frequently Asked Questions
 
