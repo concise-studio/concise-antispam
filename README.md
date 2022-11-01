@@ -34,7 +34,7 @@ You can also always manually call `\Concise\Antispam::validateTokenOrDie()` in y
 1. Upload plugin to plugins directory
 2. Active plugin through the "Plugins" menu in WordPress
 
-## Formidable Forms integration ==
+## Formidable Forms integration
 
 For proper work disable the honeypot checking in the forms
 
