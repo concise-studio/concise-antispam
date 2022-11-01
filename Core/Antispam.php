@@ -82,6 +82,7 @@ class Antispam
             $_SERVER['REQUEST_METHOD'] === "POST" && // validate token only if it is POST request
             !Antispam::isCurrent("/wp-login.php") && // do not validate wp-login.php page
             !Antispam::isCurrent("/wp-admin") && // do not validate if user is in admin panel
+            !Antispam::isCurrent("/wp-cron.php") &&  // do not validate cron
             Antispam::isRegularForm() // check content type, to make sure it is regualar form and not block ajax requests
         );        
         $needToValidateToken = (bool)apply_filters("concise_antispam_need_to_validate_token", $needToValidateToken);
